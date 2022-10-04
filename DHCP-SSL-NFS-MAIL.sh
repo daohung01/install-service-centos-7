@@ -51,6 +51,8 @@ BrowserMatch "MSIE [2-5]" \
          downgrade-1.0 force-response-1.0
 CustomLog logs/ssl_request_log \
           "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+</VirtualHost>
+EOF
 sleep 2;
 #!/bin/bash
 yum install nfs-utils -y 
@@ -148,7 +150,7 @@ sleep 2;
 
 
 
-# 1-1-hungdnt-4-Welcome To Webmail-7-https://hungdn.local-8-hungdn-R-2-1-hungdn.local
+# 1-1-hungdn-4-Welcome To Webmail-7-https://hungdn.local-8-hungdn-R-2-1-hungdn.local
 #-3-2-S-Q
 #!/bin/bash
 #squi=/etc/httpd/conf/httpd.conf
