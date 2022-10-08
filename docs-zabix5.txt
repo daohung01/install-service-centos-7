@@ -1,1 +1,3 @@
 https://computingforgeeks.com/how-to-install-zabbix-server-on-centos-7/
+
+           https://www.fosslinux.com/7705/how-to-install-and-configure-zabbix-on-centos-7.htm
