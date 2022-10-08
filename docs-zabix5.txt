@@ -1,0 +1,1 @@
+https://computingforgeeks.com/how-to-install-zabbix-server-on-centos-7/
