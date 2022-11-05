@@ -37,31 +37,28 @@ echo '</body>' >> index.html
 echo '</html>' >> index.html
 echo " install Apache2 success"
 sleep 10;
-#!/bin/bash
 yum install bind bind-utils -y
 sleep 2;
 echo "hungdn.local" > /etc/hostname
 echo "HOSTNAME=hungdn.local" > /etc/sysconfig/network
 sleep 2;
 systemctl stop firewalld
-echo "172.16.0.99 hungdn.local" >> /etc/hosts
-sed -i 's/127.0.0.1;/127.0.0.1; 172.16.0.99; /' /etc/named.conf
+echo "172.16.1.99 hungdn.local" >> /etc/hosts
+sed -i 's/127.0.0.1;/127.0.0.1; 172.16.1.99; /' /etc/named.conf
 zones=/etc/named.rfc1912.zones
 cat > $zones <<EOF 
-
 zone "hungdn.local" IN {
         type master;
         file "db.hungdn.local";
 };
-
-zone "0.16.172.in-addr.arpa" IN {
+zone "1.16.172.in-addr.arpa" IN {
         type master;
-        file "db.172.16.0";
+        file "db.172.16.1";
 };
 EOF
 sleep 2;
 cp /var/named/named.localhost /var/named/db.thungdn.local
-cp /var/named/named.loopback /var/named/db.172.16.0
+cp /var/named/named.loopback /var/named/db.172.16.1
 sleep 2;
 dbl=/var/named/db.hungdn.local
 cat > $dbl <<EOF
@@ -73,14 +70,14 @@ $TTL 1D
                                         1W      ; expire
                                         3H )    ; minimum
                 IN              NS              hungdn.local.
-                IN              A               172.16.0.99
-dns             IN              A               172.16.0.99
-hungdn.local.   IN              A               172.16.0.99
-www             IN              A               172.16.0.99
+                IN              A               172.16.1.99
+dns             IN              A               172.16.1.99
+hungdn.local.   IN              A               172.16.1.99
+www             IN              A               172.16.1.99
 ftp             IN              CNAME           www
 EOF
 sleep 2;
-db1=/var/named/db.172.16.0
+db1=/var/named/db.172.16.1
 cat > $db1 <<EOF
 $TTL 1D
 @       IN SOA  hungdn.local.      root.hungdn.local. (
@@ -96,20 +93,15 @@ EOF
 
 sleep 2;
 chown named:named /var/named/db.hungdn.local
-chown named:named /var/named/db.172.16.0
+chown named:named /var/named/db.172.16.1
 sleep 2;
 reso=/etc/resolv.conf
 cat > $ reso <<EOF
-nameserver 172.16.0.99
+nameserver 172.16.1.99
 nameserver 8.8.8.8
 EOF
 service named restart
 service httpd restart
 echo " install DNS success "
 sleep 10;
-echo " susccess apache2 - DNS fix" 
-
-
-
-
-
+echo " susccess apache2 - DNS fix"
