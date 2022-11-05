@@ -3,13 +3,13 @@ yum install dhcp -y
 cp /usr/share/doc/dhcp-4.2.5/dhcpd.conf.example /etc/dhcp/dhcpd.conf
 dhcp=/etc/dhcp/dhcpd.conf
 cat > $dhcp <<EOF
-subnet 172.16.0.0 netmask 255.255.255.0 {
+subnet 172.16.1.0 netmask 255.255.255.0 {
          option routers                  172.16.0.2; # địa chỉ gateway
          option subnet-mask              255.255.255.0; # subnet mask gateway
          option domain-name              "hungdn.local"; # tên domain
-         option domain-name-servers      172.16.0.99; # địa chỉ DNS Server
+         option domain-name-servers      172.16.1.99; # địa chỉ DNS Server
          option time-offset              -18000;     # Eastern Standard Time
-         range 172.16.0.10 172.16.0.100; # miền IP được gán tự động cho client
+         range 172.16.1.10 172.16.1.100; # miền IP được gán tự động cho client
 }
 EOF
 sleep 2;
@@ -24,7 +24,6 @@ sleep 2;
 ssl=/etc/httpd/conf.d/ssl.conf
 cat > $ssl <<EOF
 Listen 443 https
-
 SSLPassPhraseDialog exec:/usr/libexec/httpd-ssl-pass-dialog
 SSLSessionCache         shmcb:/run/httpd/sslcache(512000)
 SSLSessionCacheTimeout  300
@@ -69,7 +68,7 @@ systemctl start nfs-server
 systemctl start nfs-lock
 systemctl start nfs-idmap
 sleep 2;
-echo "/share-data    172.16.0.0/24(rw,sync,no_root_squash,no_all_squash)" >> /etc/exports
+echo "/share-data    172.16.1.0/24(rw,sync,no_root_squash,no_all_squash)" >> /etc/exports
 systemctl restart nfs-server
 sleep2;
 yum install epel-release -y
@@ -82,7 +81,7 @@ sed -i 's/#myorigin = $mydomain/myorigin = $mydomain/' /etc/postfix/main.cf
 sed -i 's/#inet_interfaces = all/inet_interfaces = all/' /etc/postfix/main.cf
 sed -i 's/#mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain/mydestination = $myhostname, localhost.$mydomain, localhost, $hungdn.local/' /etc/postfix/main.cf
 sleep 2;
-echo "mynetworks = 172.16.0.0/24, 127.0.0.0/8, 0.0.0.0/0, 192.168.1.0/24" >> /etc/postfix/main.cf
+echo "mynetworks = 172.16.1.0/24, 127.0.0.0/8, 0.0.0.0/0, 192.168.1.0/24" >> /etc/postfix/main.cf
 systemctl enable postfix 
 systemctl restart postfix
 sleep 2;
@@ -102,35 +101,28 @@ service imap-login {
   inet_listener imaps {
   }
 }
-
 service pop3-login {
   inet_listener pop3 {
   }
   inet_listener pop3s {
   }
 }
-
 service lmtp {
   unix_listener lmtp {
   }
 }
-
 service imap {
 }
-
 service pop3 {
 }
-
 service auth {
   unix_listener auth-userdb {
     user = postfix
     group = postfix
   }
 }
-
 service auth-worker {
 }
-
 service dict {
   unix_listener dict {
   }
